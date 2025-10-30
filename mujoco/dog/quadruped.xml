@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+@date 08.26.2025
+@author t_kondo@cc.tuat.ac.jp
+-->
+
+<mujoco model="virtual creature">
+
+  <option timestep="0.01" integrator="Euler" gravity="0 0 -9.8"/>
+  
+  <visual>
+    <global elevation="-10"/>
+  </visual>
+
+  <default>
+    <geom rgba="1 1 1 1"/>
+    <site rgba="1 0 1 1" size="0.006"/>
+    <tendon rgba="1 0 0 1" width="0.004"/>
+    <joint limited="true" stiffness="6" damping="0.2"/>
+    <motor ctrlrange="-1 1" ctrllimited="true"/>
+    <muscle ctrlrange="0 1" ctrllimited="true"/>
+  </default>
+  
+  <asset>
+    <texture name="grid" type="2d" builtin="checker" width="256" height="256" rgb2="0.2 0.2 0.2" rgb1="0 0 0"/>
+    <material name="grid" texture="grid" texrepeat="5 5" texuniform="true" reflectance=".1"/>
+  </asset>
+  
+  <worldbody>
+
+    <!-- 地面 -->
+    <geom name="ground" type="plane" size="5 5 0.05" pos="0 0 0" material="grid" friction="1"/>
+
+    <!-- カメラ -->
+    <camera name="Above" pos="0 0 2" xyaxes="1 0 0 0 1 0"/>
+    <camera name="Side" pos="0 -2 .2" xyaxes="1 0 0 0 .02 .97"/>
+
+    <!-- 光源 -->    
+    <light directional="true" diffuse=".8 .8 .8" specular=".2 .2 .2" pos="0 0 5" dir="0 0 -1"/>
+    
+    <!-- Obstacle -->
+    <body name="obstacle">
+      <geom name = "obstacle" type="box" size="0.07 0.07 0.07" pos="1 0 0.25" mass="0.1" rgba="0 1 0 1"/>
+      <!--<geom name = "obstacle" type="sphere" size="0.08" pos="1 0 0.025" mass="50.01" rgba="1 0 0 1"/>      -->
+      <freejoint/>
+    </body>
+
+    <!-- Quad robot -->
+    <body name="quadbot" pos="0 0 0.2">
+      <freejoint/>
+
+      <!-- Head and Neck -->
+      <geom name="neck" type="capsule"  pos="0.16 0 0.048" euler="0 30 0" size=".018 0.03" mass="0.01"/>
+      <geom name="head" type="cylinder" pos="0.19 0 0.058" euler="0 -50 0" size=".022 0.04" mass="0.5"/>
+
+      <!-- Backbone -->
+      <geom name="backbone" type="capsule" euler="0 90 0" size=".02 0.12" mass="2.0"/>
+      
+      <site name="fle0" pos="0.09 0.02 0" />
+      <site name="flf0" pos="0.15 0.02 0" />
+      <site name="fre0" pos="0.09 -0.02 0" />
+      <site name="frf0" pos="0.15 -0.02 0" />
+
+      <site name="ble0" pos="-0.07 0.02 0" />
+      <site name="blf0" pos="-0.13 0.02 0" />
+      <site name="bre0" pos="-0.07 -0.02 0" />
+      <site name="brf0" pos="-0.13 -0.02 0" />
+      
+    <!-- Front Shoulder -->
+      <body name="front_shoulder" pos="0.12 0 0">
+	<geom name="front_shoulder_geom" type="cylinder" euler="90 0 0" size=".02 .05" mass="0.1"/>
+
+	<!-- 左前脚 -->
+	<body name="front_left_shoulder>" pos="0 0.08 0">
+	  <joint name="front_left_upperarm_joint" type="hinge" pos="0 0 0" axis="0 0 1" range="-5 5" springref="0"/>
+  <geom name="front_left_shoulder_geom" type="cylinder" size="0.03 0.01" rgba="0 0 1 1"/>
+
+	  <site name="fle1" pos="-0.03 0.0 0" />
+	  <site name="flf1" pos="0.03 0.0 0" />
+
+	  <body name="front_left_upperarm>" pos="0 0 0">
+	    <joint name="front_left_shoulder_joint" type="hinge" pos="0 0 0" axis="0 1 0" range="-30 35" springref="30"/>
+	    <geom name="front_left_shoulder_joint_geom" type="cylinder" euler="90 0 0" size=".02 .015" rgba="0 0 1 1"/>
+	    <geom name="front_left_upperarm_geom" type="capsule" pos="0 0 -0.05" euler="0 0 0" size=".015 .05" mass="0.2"/>
+	    <site name="fle2" pos="-0.02 0 -0.05" />
+	    <site name="flf2" pos="0.02 0 -0.05" />
+	    <site name="flx0" pos="-0.02 0 -0.11"  rgba="0 0 0 0"/>
+	    
+	    <body name="front_left_forearm" pos="0 0 -0.15">
+	      <joint name="front_left_forearm_joint" pos="0 0 0.05" type="hinge" axis="0 1 0" range="-65 0" springref="-60"/>
+	      <geom name="front_left_elbow_joint_geom" type="cylinder" pos="0 0 0.05" euler="90 0 0" size=".02 .015" rgba="0 0 1 1"/>
+	      <geom name="front_left_forearm_geom" type="capsule" euler="0 0 0" size="0.015 0.05" mass="0.2"/>
+	      <site name="fle3" pos="-0.02 0 0" />
+	      <site name="flf3" pos="0.02 0 0" />
+	      <geom name="front_left_foot" type="sphere" pos="0 0 -0.05" size=".02" mass="0.1" friction="1"/>
+	      <!--<geom name="front_left_foot" type="cylinder" pos="0 0 -0.05" euler="90 0 0" size="0.02 0.015" mass="0.1" friction="1"/>-->
+	    </body>
+	  </body>
+	</body>	  
+
+	<!-- 右前脚 -->
+	<body name="front_right_shoulder>" pos="0 -0.08 0">
+	  <joint name="front_right_upperarm_joint" type="hinge" pos="0 0 0" axis="0 0 1" range="-5 5" springref="0"/>
+	  <geom name="front_right_shoulder_geom" type="cylinder" size="0.03 0.01" rgba="0 0 1 1"/>
+	  
+	  <site name="fre1" pos="-0.03 0.0 0" />
+	  <site name="frf1" pos="0.03 0.0 0" />
+
+	  <body name="front_right_upperarm>" pos="0 0 0">
+	    <joint name="front_right_shoulder_joint" type="hinge" pos="0 0 0" axis="0 1 0" range="-30 35" springref="30"/>
+	    <geom name="front_right_shoulder_joint_geom" type="cylinder" euler="90 0 0" size=".02 .015" rgba="0 0 1 1"/>
+	    <geom name="front_right_upperarm_geom" type="capsule" pos="0 0 -0.05" euler="0 0 0" size=".015 .05" mass="0.2"/>
+	    <site name="fre2" pos="-0.02 0 -0.05" />
+	    <site name="frf2" pos="0.02 0 -0.05" />
+	    <site name="frx0" pos="-0.02 0 -0.11"  rgba="0 0 0 0"/>
+
+	    <body name="front_right_forearm" pos="0 0 -0.15">
+	      <joint name="front_right_forearm_joint" pos="0 0 0.05" type="hinge" axis="0 1 0" range="-65 0" springref="-60"/>
+	      <geom name="front_right_elbow_joint_geom" type="cylinder" pos="0 0 0.05" euler="90 0 0" size=".02 .015" rgba="0 0 1 1"/>
+	      <geom name="front_right_forearm_geom" type="capsule" euler="0 0 0" size=".015 .05" mass="0.2"/>
+	      <site name="fre3" pos="-0.02 0 0" />
+	      <site name="frf3" pos="0.02 0 0" />
+	      <geom name="front_right_foot" type="sphere" pos="0 0 -0.05" size=".02" mass="0.1" friction="1"/>
+	      <!--<geom name="front_right_foot" type="cylinder" pos="0 0 -0.05" euler="90 0 0" size="0.02 0.015" mass="0.1" friction="1"/>	      -->
+	    </body>
+	  </body>
+	</body> 
+      </body>
+
+      <body name="back_shoulder" pos="-0.10 0 0">
+	<geom name="back_shoulder_geom" type="cylinder" euler="90 0 0" size=".02 .05" mass="0.1"/>
+
+	<!-- 左後脚 -->
+	<body name="back_left_shoulder>" pos="0 0.08 0">
+	  <joint name="back_left_upperarm_joint" type="hinge" pos="0 0 0" axis="0 0 1" range="-5 5" springref="0"/>
+	  <geom name="back_left_shoulder_geom" type="cylinder" size="0.03 0.01" rgba="0 0 1 1"/>
+	  
+	  <site name="ble1" pos="0.03 0.0 0" />
+	  <site name="blf1" pos="-0.03 0.0 0" />
+	  
+	  <body name="back_left_upperarm>" pos="0 0 0">
+	    <joint name="back_left_shoulder_joint" type="hinge" pos="0 0 0" axis="0 1 0" range="-35 30" springref="-30"/>
+	    <geom name="back_left_shoulder_joint_geom" type="cylinder" euler="90 0 0" size=".02 .015" rgba="0 0 1 1"/>
+	    <geom name="back_left_upperarm_geom" type="capsule" pos="0 0 -0.05" euler="0 0 0" size=".015 .05" mass="0.2"/>
+	    <site name="ble2" pos="0.02 0 -0.05" />
+	    <site name="blf2" pos="-0.02 0 -0.05" />
+	    <site name="blx0" pos="0.02 0 -0.11"  rgba="0 0 0 0"/>
+
+	    <body name="back_left_forearm" pos="0 0 -0.15">
+	      <joint name="back_left_forearm_joint" pos="0 0 0.05" type="hinge" axis="0 1 0" range="0 65" springref="60"/>
+	      <geom name="back_left_elbow_joint_geom" type="cylinder" pos="0 0 0.05" euler="90 0 0" size=".02 .015" rgba="0 0 1 1"/>
+	      <geom name="back_left_forearm_geom" type="capsule" euler="0 0 0" size="0.015 0.05" mass="0.2"/>
+	      <site name="ble3" pos="0.02 0 0" />
+	      <site name="blf3" pos="-0.02 0 0" />
+	      <geom name="back_left_foot" type="sphere" pos="0 0 -0.05" size="0.02" mass="0.1" friction="1"/>
+	      <!--<geom name="back_left_foot" type="cylinder" pos="0 0 -0.05" euler="90 0 0" size="0.02 0.015" mass="0.1" friction="1">-->
+	    </body>
+	  </body>
+	</body>	  
+	  
+	<!-- 右後脚 -->
+	<body name="back_right_shoulder>" pos="0 -0.08 0">
+	  <joint name="back_right_upperarm_joint" type="hinge" pos="0 0 0" axis="0 0 1" range="-5 5" springref="0"/>
+	  <geom name="back_right_shoulder_geom" type="cylinder" size="0.03 0.01" rgba="0 0 1 1"/>
+	  	
+	  <site name="bre1" pos="0.03 0.0 0" />
+	  <site name="brf1" pos="-0.03 0.0 0" />
+
+	  <body name="back_right_upperarm>" pos="0 0 0">
+	    <joint name="back_right_shoulder_joint" type="hinge" pos="0 0 0" axis="0 1 0" range="-35 30" springref="-30"/>
+	    <geom name="back_right_shoulder_joint_geom" type="cylinder" euler="90 0 0" size=".02 .015" rgba="0 0 1 1"/>
+	    <geom name="back_right_upperarm_geom" type="capsule" pos="0 0 -0.05" euler="0 0 0" size=".015 0.05" mass="0.2"/>
+	    <site name="bre2" pos="0.02 0 -0.05" />
+	    <site name="brf2" pos="-0.02 0 -0.05" />
+	    <site name="brx0" pos="0.02 0 -0.11"  rgba="0 0 0 0"/>
+	    
+	    <body name="back_right_forearm" pos="0 0 -0.15">
+	      <joint name="back_right_forearm_joint" pos="0 0 0.05" type="hinge" axis="0 1 0" range="0 65" springref="60"/>
+	      <geom name="back_right_elbow_joint_geom" type="cylinder" pos="0 0 0.05" euler="90 0 0" size=".02 .015" rgba="0 0 1 1"/>
+	      <geom name="back_right_forearm_geom" type="capsule" euler="0 0 0" size="0.015 0.05" mass="0.2"/>
+	      <site name="bre3" pos="0.02 0 0" />
+	      <site name="brf3" pos="-0.02 0 0" />
+	      <geom name="back_right_foot" type="sphere" pos="0 0 -0.05" size="0.02" mass="0.1" friction="1"/>
+	      <!--<geom name="back_right_foot" type="cylinder" pos="0 0 -0.05" euler="90 0 0" size="0.02 0.015" mass="0.1" friction="1"/>-->
+	    </body>
+	  </body>
+	</body>
+      </body>	
+    </body>
+  </worldbody>
+
+  <tendon>      
+    <!-- 左前脚-->
+    <spatial name="FLF1">	
+      <site site="flf0"/>
+      <site site="flf1"/>
+    </spatial>
+    <spatial name="FLE1">
+      <site site="fle0"/>
+      <site site="fle1"/>
+    </spatial>
+
+    <spatial name="FLF2">
+      <site site="flf1"/>
+      <site site="flf2"/>
+    </spatial>
+    <spatial name="FLE2">
+      <site site="fle1"/>
+      <site site="fle2"/>
+    </spatial>
+    
+    <spatial name="FLF3">
+      <site site="flf2"/>
+      <site site="flf3"/>
+    </spatial>    
+    <spatial name="FLE3">
+      <site site="fle2"/>
+      <geom geom="front_left_elbow_joint_geom" sidesite="flx0"/>
+      <site site="fle3"/>
+    </spatial>
+
+    <!-- 右前脚-->
+    <spatial name="FRF1">
+      <site site="frf0"/>
+      <site site="frf1"/>
+    </spatial>
+    <spatial name="FRE1">
+      <site site="fre0"/>
+      <site site="fre1"/>
+    </spatial>
+
+    <spatial name="FRF2">
+      <site site="frf1"/>
+      <site site="frf2"/>
+    </spatial>
+    
+    <spatial name="FRE2">
+      <site site="fre1"/>
+      <site site="fre2"/>
+    </spatial>
+    
+    <spatial name="FRF3">
+      <site site="frf2"/>
+      <site site="frf3"/>
+    </spatial>
+    <spatial name="FRE3">
+      <site site="fre2"/>
+      <geom geom="front_right_elbow_joint_geom" sidesite="frx0"/>
+      <site site="fre3"/>
+    </spatial>
+
+    <!-- 左後脚-->
+    <spatial name="BLF1">
+      <site site="blf0"/>
+      <site site="blf1"/>
+    </spatial>
+    <spatial name="BLE1">
+      <site site="ble0"/>
+      <site site="ble1"/>
+    </spatial>
+
+    <spatial name="BLF2">
+      <site site="blf1"/>
+      <site site="blf2"/>
+    </spatial>
+    <spatial name="BLE2">
+      <site site="ble1"/>
+      <site site="ble2"/>
+    </spatial>
+    
+    <spatial name="BLF3">
+      <site site="blf2"/>
+      <site site="blf3"/>
+    </spatial>    
+    <spatial name="BLE3">
+      <site site="ble2"/>
+      <geom geom="back_left_elbow_joint_geom" sidesite="blx0"/>
+      <site site="ble3"/>
+    </spatial>
+
+    <!-- 右後脚-->
+    <spatial name="BRF1">
+      <site site="brf0"/>
+      <site site="brf1"/>
+    </spatial>
+    <spatial name="BRE1">
+      <site site="bre0"/>
+      <site site="bre1"/>
+    </spatial>
+
+    <spatial name="BRF2">
+      <site site="brf1"/>
+      <site site="brf2"/>
+    </spatial>
+    
+    <spatial name="BRE2">
+      <site site="bre1"/>
+      <site site="bre2"/>
+    </spatial>
+    
+    <spatial name="BRF3">
+      <site site="brf2"/>
+      <site site="brf3"/>
+    </spatial>
+    <spatial name="BRE3">
+      <site site="bre2"/>
+      <geom geom="back_right_elbow_joint_geom" sidesite="brx0"/>
+      <site site="bre3"/>
+    </spatial>
+
+  </tendon>
+  
+  <actuator>
+    <muscle name="FLF1" tendon="FLF1" force="125" lengthrange="0 10"/>
+    <muscle name="FLE1" tendon="FLE1" force="125" lengthrange="0 10"/>    
+    <muscle name="FLF2" tendon="FLF2" force="125" lengthrange="0 10"/>
+    <muscle name="FLE2" tendon="FLE2" force="125" lengthrange="0 10"/>    
+    <muscle name="FLF3" tendon="FLF3" force="125" lengthrange="0 10"/>
+    <muscle name="FLE3" tendon="FLE3" force="125" lengthrange="0 10"/>    
+
+    <muscle name="FRF1" tendon="FRF1" force="125" lengthrange="0 10"/>
+    <muscle name="FRE1" tendon="FRE1" force="125" lengthrange="0 10"/>    
+    <muscle name="FRF2" tendon="FRF2" force="125" lengthrange="0 10"/>
+    <muscle name="FRE2" tendon="FRE2" force="125" lengthrange="0 10"/>    
+    <muscle name="FRF3" tendon="FRF3" force="125" lengthrange="0 10"/>
+    <muscle name="FRE3" tendon="FRE3" force="125" lengthrange="0 10"/>    
+
+    <muscle name="BLF1" tendon="BLF1" force="125" lengthrange="0 10"/>
+    <muscle name="BLE1" tendon="BLE1" force="125" lengthrange="0 10"/>    
+    <muscle name="BLF2" tendon="BLF2" force="125" lengthrange="0 10"/>
+    <muscle name="BLE2" tendon="BLE2" force="125" lengthrange="0 10"/>    
+    <muscle name="BLF3" tendon="BLF3" force="125" lengthrange="0 10"/>
+    <muscle name="BLE3" tendon="BLE3" force="125" lengthrange="0 10"/>    
+
+    <muscle name="BRF1" tendon="BRF1" force="125" lengthrange="0 10"/>
+    <muscle name="BRE1" tendon="BRE1" force="125" lengthrange="0 10"/>    
+    <muscle name="BRF2" tendon="BRF2" force="125" lengthrange="0 10"/>
+    <muscle name="BRE2" tendon="BRE2" force="125" lengthrange="0 10"/>    
+    <muscle name="BRF3" tendon="BRF3" force="125" lengthrange="0 10"/>
+    <muscle name="BRE3" tendon="BRE3" force="125" lengthrange="0 10"/>    
+</actuator>
+
+</mujoco>
