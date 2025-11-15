@@ -1,0 +1,91 @@
+<mujoco>
+  <option gravity="0 0 -9.81" density="1.204" viscosity="1.8e-5" integrator="implicit"/>
+
+  <visual>
+    <global elevation="-10"/>
+    <headlight ambient="0.35 0.35 0.35" diffuse="0.65 0.65 0.65" specular="0.10 0.10 0.10"/>
+  </visual>
+
+  <default>
+    <tendon limited="true" width="0.003" rgba="1 1 1 1"/>
+    <geom friction=".2"/>
+    <default class="weight">
+      <geom rgba=".8 .4 .8 1"/>
+      <site rgba=".8 .4 .8 1"/>
+    </default>
+    <default class="balloon">
+      <geom density="0.167" fluidshape="ellipsoid"/>
+      <default class="pink">
+        <geom rgba="1 .6 .7 1"/>
+        <site rgba="1 .6 .7 1"/>
+      </default>
+      <default class="blue">
+        <geom rgba=".3 .7 .9 1"/>
+        <site rgba=".3 .7 .9 1"/>
+      </default>
+      <default class="green">
+        <geom rgba=".4 .9 .5 1"/>
+        <site rgba=".4 .9 .5 1"/>
+      </default>
+      <default class="orange">
+        <geom rgba="1 .4 0 1"/>
+        <site rgba="1 .4 0 1"/>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb2="0.7 0.8 0.9" rgb1="0.4 0.5 0.6"/>
+    <material name="grid" texture="grid" texrepeat="2 2" texuniform="true" reflectance=".6"/>
+  </asset>
+
+  <worldbody>
+    <geom name="ground" type="plane" size="5 5 .05" pos="0 0 -.5" material="grid"/>
+    <!-- <geom name="ramp" type="box" size=".4 .2 .03" pos="0 0 -.4" euler="0 20 0" rgba="1 1 1 1"/> -->
+    
+    <!-- シーン全体を照らす3点ライト -->
+    <light name="sun_key" directional="true" diffuse="0.75 0.75 0.75" specular="0.20 0.20 0.20"
+           pos="1 1 4" dir="-1 -1 -2" castshadow="true"/>
+    <light name="sun_fill" directional="true" diffuse="0.45 0.45 0.45" specular="0.05 0.05 0.05"
+           pos="-2 -1 3" dir="1 1 -1" castshadow="false"/>
+    <light name="sun_rim" directional="true" diffuse="0.25 0.25 0.25" specular="0.05 0.05 0.05"
+           pos="-1 2 2" dir="0 -1 -1" castshadow="false"/>
+
+    <body name="board1" pos="0 0 1.0">
+      <!-- <joint name="root" type="free"/> -->
+      <geom type="box" size="0.5 0.1 0.02" rgba="0.7 0.3 0.3 1"/>
+      
+      <!-- 板2（board1にヒンジで接続） -->
+      <body name="board2" pos="0.5 0 0">
+        <!-- 板1の右端に接続される回転ジョイント -->
+        <joint name="joint1" type="hinge" axis="0 0 1" pos="0 0 0"/>
+        <geom type="box" size="0.5 0.1 0.02" rgba="0.3 0.7 0.3 1"/>
+        
+        <!-- 板3（board2にさらにヒンジで接続） -->
+        <body name="board3" pos="0.5 0 0">
+          <joint name="joint2" type="hinge" axis="0 0 1" pos="0 0 0"/>
+          <geom type="box" size="0.5 0.1 0.02" rgba="0.3 0.3 0.7 1"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <!-- <tendon>
+    <spatial range="0 0.6">
+      <site site="pink"/>
+      <site site="weight1"/>
+    </spatial>
+    <spatial range="0 0.4">
+      <site site="blue"/>
+      <site site="weight1"/>
+    </spatial>
+    <spatial range="0 0.3">
+      <site site="green"/>
+      <site site="weight2"/>
+    </spatial>
+    <spatial range="0 0.5">
+      <site site="orange"/>
+      <site site="weight2"/>
+    </spatial>
+  </tendon> -->
+</mujoco>
