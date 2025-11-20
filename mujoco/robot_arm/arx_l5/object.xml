@@ -1,0 +1,8 @@
+<mujoco model="Obuject">
+    <worldbody>
+        <body name="obstacle" pos="0.5 0 1.0">
+            <freejoint/>
+            <geom name="light_box" type="box" size="0.05 0.05 0.05" mass="0.2"/>
+        </body>
+    </worldbody>
+</mujoco>
