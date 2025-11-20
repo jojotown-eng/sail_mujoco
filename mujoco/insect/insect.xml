@@ -40,9 +40,12 @@
   </asset>
 
   <worldbody>
-    <geom name="ground" type="plane" size="5 5 .05" pos="0 0 -.5" material="grid"/>
+    <geom name="ground" type="plane" size="5 5 .05" pos="0 0 -.5" material="grid" solref="0.004 1" solimp="0.9 0.95 0.001" />
     <!-- <geom name="ramp" type="box" size=".4 .2 .03" pos="0 0 -.4" euler="0 20 0" rgba="1 1 1 1"/> -->
     
+    <camera name="Above" pos="0 0 2" xyaxes="1 0 0 0 1 0"/>
+    <camera name="Side" pos="0 -2 .2" xyaxes="1 0 0 0 .02 .97"/>
+
     <!-- シーン全体を照らす3点ライト -->
     <light name="sun_key" directional="true" diffuse="0.75 0.75 0.75" specular="0.20 0.20 0.20"
            pos="1 1 4" dir="-1 -1 -2" castshadow="true"/>
@@ -51,41 +54,29 @@
     <light name="sun_rim" directional="true" diffuse="0.25 0.25 0.25" specular="0.05 0.05 0.05"
            pos="-1 2 2" dir="0 -1 -1" castshadow="false"/>
 
-    <body name="board1" pos="0 0 1.0">
-      <!-- <joint name="root" type="free"/> -->
-      <geom type="box" size="0.5 0.1 0.02" rgba="0.7 0.3 0.3 1"/>
-      
-      <!-- 板2（board1にヒンジで接続） -->
-      <body name="board2" pos="0.5 0 0">
-        <!-- 板1の右端に接続される回転ジョイント -->
-        <joint name="joint1" type="hinge" axis="0 0 1" pos="0 0 0"/>
-        <geom type="box" size="0.5 0.1 0.02" rgba="0.3 0.7 0.3 1"/>
-        
-        <!-- 板3（board2にさらにヒンジで接続） -->
-        <body name="board3" pos="0.5 0 0">
-          <joint name="joint2" type="hinge" axis="0 0 1" pos="0 0 0"/>
-          <geom type="box" size="0.5 0.1 0.02" rgba="0.3 0.3 0.7 1"/>
+    <body name="board1" pos="0 0 0.5">
+      <freejoint/>
+      <geom type="box" size="0.5 0.1 0.02" mass="2" rgba="0.7 0.3 0.3 1"/>
+      <body name="front_connection" pos="0.5 0 0">
+        <joint name="front_leg" type="hinge" pos="0 0 0" damping="1.0" axis="0 1 0" />
+        <geom type="cylinder" size="0.1 0.1" euler="90 0 0" mass="0.5"/>
+        <body name="front_board" pos="0 0 -0.25">
+          <geom type="box" size="0.02 0.1 0.25" mass="0.5" />
+        </body>
+      </body>
+
+      <body name="back_connection" pos="-0.5 0 0">
+        <joint name="back_leg" type="hinge" pos="0 0 0" damping="1.0" axis="0 1 0"/>
+        <geom type="cylinder" size="0.1 0.1" euler="90 0 0" mass="0.5" />
+        <body name="back_board" pos="0 0 -0.25">
+          <geom type="box" size="0.02 0.1 0.25" mass="0.5" />
         </body>
       </body>
     </body>
   </worldbody>
 
-  <!-- <tendon>
-    <spatial range="0 0.6">
-      <site site="pink"/>
-      <site site="weight1"/>
-    </spatial>
-    <spatial range="0 0.4">
-      <site site="blue"/>
-      <site site="weight1"/>
-    </spatial>
-    <spatial range="0 0.3">
-      <site site="green"/>
-      <site site="weight2"/>
-    </spatial>
-    <spatial range="0 0.5">
-      <site site="orange"/>
-      <site site="weight2"/>
-    </spatial>
-  </tendon> -->
+  <actuator>
+    <position name="front_motor" joint="front_leg" kp="100"/>
+    <position name="back_motor" joint="back_leg" kp="100"/>
+  </actuator>
 </mujoco>
