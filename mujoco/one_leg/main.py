@@ -3,7 +3,7 @@ import numpy as np
 import time
 from mujoco import viewer
 
-model = mujoco.MjModel.from_xml_path("insect.xml")
+model = mujoco.MjModel.from_xml_path("one_leg.xml")
 data = mujoco.MjData(model)
 
 duration = 80.0
@@ -19,10 +19,6 @@ with viewer.launch_passive(model, data) as v:
 		if t > 1.0:
 			model.opt.gravity[:] = [0, 0, -9.81]
 		if t > 3.0:
-			
-			data.ctrl[0] = (np.pi / 6) * np.sin(2 * np.pi * t *0.5)
-			data.ctrl[1] = (np.pi / 6) * np.sin(2 * np.pi * t *0.5)
-			data.ctrl[2] = -(np.pi / 6) * np.sin((2 * np.pi * t + np.pi*1.5) * 0.5)
-			data.ctrl[3] = -(np.pi / 6) * np.sin((2 * np.pi * t + np.pi*1.5) * 0.5)
+			pass
 		mujoco.mj_step(model, data)
 		v.sync()

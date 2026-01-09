@@ -54,49 +54,50 @@
     <light name="sun_rim" directional="true" diffuse="0.25 0.25 0.25" specular="0.05 0.05 0.05"
            pos="-1 2 2" dir="0 -1 -1" castshadow="false"/>
 
-    <body name="board1" pos="0 0 0.5">
+    <!-- この薬みたいな形は下が原点 -->
+    <!-- ルート（横向き） -->
+    <body name="head" pos="0 0 0" euler="0 90 0">
       <freejoint/>
-      <geom type="box" size="0.5 0.3 0.02" mass="2" rgba="0.7 0.3 0.3 1"/>
 
-      <body name="front_right_connection" pos="0.5 0.3 0">
-        <joint name="front_right_leg" type="hinge" pos="0 0 0" damping="1.0" axis="0 1 0" />
-        <geom type="cylinder" size="0.1 0.1" euler="90 0 0" mass="0.5"/>
-        <body name="front_right_board" pos="0 0 -0.25">
-          <geom type="box" size="0.02 0.1 0.25" mass="0.5" />
+      <!-- 1リンク -->
+      <geom type="capsule" size="0.1 0.3" mass="0.5"/>
+      <geom type="sphere"  pos="0 0 0.3" size="0.12"/>
+
+      <body name="second" pos="0 0 0.6">
+        <joint name="j1" type="hinge" axis="0 1 0" damping="1"/>
+
+        <geom type="capsule" size="0.1 0.3" mass="0.5"/>
+        <geom type="sphere"  pos="0 0 0.3" size="0.12"/>
+
+        <body name="third" pos="0 0 0.6">
+          <joint name="j2" type="hinge" axis="0 1 0" damping="1"/>
+
+          <geom type="capsule" size="0.1 0.3" mass="0.5"/>
+          <geom type="sphere"  pos="0 0 0.3" size="0.12"/>
+
+          <body name="fourth" pos="0 0 0.6">
+            <joint name="j3" type="hinge" axis="0 1 0" damping="1"/>
+
+            <geom type="capsule" size="0.1 0.3" mass="0.5"/>
+            <geom type="sphere"  pos="0 0 0.3" size="0.12"/>
+
+            <body name="fifth" pos="0 0 0.6">
+              <joint name="j4" type="hinge" axis="0 1 0" damping="1"/>
+
+              <geom type="capsule" size="0.1 0.3" mass="0.5"/>
+              <geom type="sphere"  pos="0 0 0.3" size="0.12"/>
+            </body>
+          </body>
         </body>
       </body>
-
-      <body name="front_left_connection" pos="0.5 -0.3 0">
-        <joint name="front_left_leg" type="hinge" pos="0 0 0" damping="1.0" axis="0 1 0" />
-        <geom type="cylinder" size="0.1 0.1" euler="90 0 0" mass="0.5"/>
-        <body name="front_left_board" pos="0 0 -0.25">
-          <geom type="box" size="0.02 0.1 0.25" mass="0.5" />
-        </body>
-      </body>
-
-      <body name="back_right_connection" pos="-0.5 0.3 0">
-        <joint name="back_right_leg" type="hinge" pos="0 0 0" damping="1.0" axis="0 1 0"/>
-        <geom type="cylinder" size="0.1 0.1" euler="90 0 0" mass="0.5" />
-        <body name="back_right_board" pos="0 0 -0.25">
-          <geom type="box" size="0.02 0.1 0.25" mass="0.5" />
-        </body>
-      </body>
-
-      <body name="back_left_connection" pos="-0.5 -0.3 0">
-        <joint name="back_left_leg" type="hinge" pos="0 0 0" damping="1.0" axis="0 1 0"/>
-        <geom type="cylinder" size="0.1 0.1" euler="90 0 0" mass="0.5" />
-        <body name="back_left_board" pos="0 0 -0.25">
-          <geom type="box" size="0.02 0.1 0.25" mass="0.5" />
-        </body>
-      </body>
-
     </body>
   </worldbody>
 
+  <!-- モーター -->
   <actuator>
-    <position name="front_left_motor" joint="front_left_leg" kp="100"/>
-    <position name="front_right_motor" joint="front_right_leg" kp="100"/>
-    <position name="back_left_motor" joint="back_left_leg" kp="100"/>
-    <position name="back_right_motor" joint="back_right_leg" kp="100"/>
+    <motor joint="j1" gear="10" ctrlrange="-1 1"/>
+    <motor joint="j2" gear="10" ctrlrange="-1 1"/>
+    <motor joint="j3" gear="10" ctrlrange="-1 1"/>
+    <motor joint="j4" gear="10" ctrlrange="-1 1"/>
   </actuator>
 </mujoco>
