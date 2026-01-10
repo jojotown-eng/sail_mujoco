@@ -40,11 +40,13 @@
   </asset>
 
   <worldbody>
-    <geom name="ground" type="plane" size="5 5 .05" pos="0 0 -.5" material="grid" solref="0.004 1" solimp="0.9 0.95 0.001" />
+    <geom name="ground" type="plane" size="5 5 .05" pos="0 0 0" material="grid" solref="0.004 1" solimp="0.9 0.95 0.001" />
     <!-- <geom name="ramp" type="box" size=".4 .2 .03" pos="0 0 -.4" euler="0 20 0" rgba="1 1 1 1"/> -->
     
     <camera name="Above" pos="0 0 2" xyaxes="1 0 0 0 1 0"/>
     <camera name="Side" pos="0 -2 .2" xyaxes="1 0 0 0 .02 .97"/>
+    <!-- 俯瞰気味のカメラ -->
+    <camera name="holistic view" pos="0 -3 2" xyaxes="1 0 0 0 1 0"/>
 
     <!-- シーン全体を照らす3点ライト -->
     <light name="sun_key" directional="true" diffuse="0.75 0.75 0.75" specular="0.20 0.20 0.20"
@@ -54,7 +56,7 @@
     <light name="sun_rim" directional="true" diffuse="0.25 0.25 0.25" specular="0.05 0.05 0.05"
            pos="-1 2 2" dir="0 -1 -1" castshadow="false"/>
 
-    <body name="board1" pos="0 0 1.0">
+    <body name="board1" pos="0 0 1">
       <freejoint/>
       <geom type="box" size="1.0 0.4 0.05" mass="2" rgba="0.7 0.3 0.3 1"/>
 
